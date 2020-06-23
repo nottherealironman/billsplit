@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { login } from '../actions/userAction';
-import 'bootstrap/dist/js/bootstrap.min.js';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Login extends Component {
 
@@ -33,6 +31,7 @@ class Login extends Component {
         const token = nextProps.user.token;
         // Store auth token in local storage after login
         localStorage.setItem('billsplit.token',token);
+        this.props.history.push("/app/group");
     }
 
     render() {

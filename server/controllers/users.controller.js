@@ -98,7 +98,8 @@ module.exports.login = async (req, res) => {
           id: userInstance.id,
           name: userInstance.name,
           email: userInstance.email,
-          token: token
+          token: token,
+          logged_in: true,
         });
       }
       catch (error) {
@@ -120,7 +121,8 @@ module.exports.dashboard = async (req, res, next) => {
       return res.status(200).json({
         id: userInstance.id,
         name: userInstance.name,
-        email: userInstance.email
+        email: userInstance.email,
+        logged_in: true,
       });
   }
   catch(error){

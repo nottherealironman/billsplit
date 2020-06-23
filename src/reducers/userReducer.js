@@ -1,4 +1,4 @@
-import { LOGIN, SIGNUP } from '../actions/constants/action-types';
+import { LOGIN, SIGNUP, FETCH_USER_INFO } from '../actions/constants/action-types';
 
 const initialState = {
     info: {}
@@ -13,6 +13,12 @@ export default function (state = initialState, action) {
             }
 
         case LOGIN:
+            return {
+                ...state,
+                info: action.payload
+            }
+
+        case FETCH_USER_INFO:
             return {
                 ...state,
                 info: action.payload
