@@ -32,6 +32,7 @@ export class Signup extends Component {
     componentWillReceiveProps(nextProps){
         const token = nextProps.user.token;
         // Store auth token in local storage after signup
+        console.log("Signup called: ",token);
         localStorage.setItem('billsplit.token:',token);
     }
 

@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../actions/userAction';
 
+/* When user refresh page, login component will be called as well (due to '/' default route)*/
 class Login extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             email: '',
@@ -15,10 +16,10 @@ class Login extends Component {
     }
 
     onChange = (e) => {
-        this.setState({[e.target.name]: e.target.value});
+        this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmit(e){
+    onSubmit(e) {
         e.preventDefault();
         const user = {
             email: this.state.email,
@@ -27,14 +28,18 @@ class Login extends Component {
         this.props.login(user);
     }
 
-    componentWillReceiveProps(nextProps){
-        const token = nextProps.user.token;
+    componentWillReceiveProps(nextProps) {
+        var token = nextProps.user.token;
         // Store auth token in local storage after login
-        localStorage.setItem('billsplit.token',token);
+        if (token !== undefined) {
+            localStorage.setItem('billsplit.token', token);
+        }
         this.props.history.push("/app/group");
     }
 
     render() {
+        /* const { from } = this.props.location.state || { from: { pathname: '/' } }
+        console.log(from); */
         return (
             <div>
                 <div className="row d-flex justify-content-center align-items-center login-wrapper">

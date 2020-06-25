@@ -9,13 +9,16 @@ export const fetchUserInfo = (token) => dispatch => {
             'Authorization': `JWT ${token}`,
             'content-type': 'application/json'
         }),
-        })
-    .then(res => res.json())
-    .then(user =>
+    })
+        .then(res => res.json())
+        .then(user =>
             dispatch({
                 type: FETCH_USER_INFO,
                 payload: user
-            }));
+            }))
+        .catch(error => {
+            console.log('error while fetching data');
+        });
 }
 
 // user signup
@@ -31,7 +34,10 @@ export const signup = (formData) => dispatch => {
         .then(user => dispatch({
             type: SIGNUP,
             payload: user
-        }));
+        }))
+        .catch(error => {
+            console.log('error while fetching data');
+        });;
 }
 
 // user login
