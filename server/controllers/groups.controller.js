@@ -49,17 +49,13 @@ module.exports.create = async (req, res) => {
   });
   try {
       const data = await group.save();
-      /*Add the creator of group to member collection also
-      If I created a group then i would be the first member in it*/
+      /*Add the creator of group to the member collection also
+      That means if I created a group then i would be the first member in it*/
       
       const member = new Member({user_id:userId, group_id:data._id});
       await member.save();
       // Send response if success
-      res.status(200).json({
-        groupId: data.id,
-        name:data.name,
-        description:data.description
-      });
+      res.status(200).json(data);
   } catch (error) {
       console.log(error);
       res.status(400).send('Failed to create group');

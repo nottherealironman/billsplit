@@ -11,6 +11,7 @@ import { fetchUserInfo } from '../actions/userAction';
 
 export class Routes extends Component {
    
+    // This method will be invoked before render and used to fetch the current user info 
     componentWillMount() {
         let token = localStorage.getItem('billsplit.token');
         this.props.fetchUserInfo(token);

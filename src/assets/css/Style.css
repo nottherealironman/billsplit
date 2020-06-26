@@ -76,6 +76,10 @@ a:focus {
     margin-bottom: 25px;
 }
 
+.mb-20{
+    margin-bottom: 20px;
+}
+
 #content{
     background-color: #fff;
 }

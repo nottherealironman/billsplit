@@ -2,14 +2,14 @@ import { LOGIN, SIGNUP, FETCH_USER_INFO } from './constants/action-types';
 
 // Method to fetch information of current user
 export const fetchUserInfo = (token) => dispatch => {
-    fetch('http://localhost:3001/v1/users/dashboard', {
-        method: 'POST',
-        headers: new Headers({
-            // Send token in header
-            'Authorization': `JWT ${token}`,
-            'content-type': 'application/json'
-        }),
-    })
+        fetch('http://localhost:3001/v1/users/dashboard', {
+            method: 'POST',
+            headers: new Headers({
+                // Send token in header
+                'Authorization': `JWT ${token}`,
+                'content-type': 'application/json'
+            }),
+        })
         .then(res => res.json())
         .then(user =>
             dispatch({
