@@ -21,6 +21,15 @@ export default function (state = initialState, action) {
                 lists: [...state.lists, action.payload]
             }
 
+        case UPDATE_GROUP:
+            // Delete currently updating group from state list
+            let states = state.lists.filter(el => el._id !== action.payload._id); 
+            return {
+                ...state,
+                // Append updated group to the state list
+                lists: [...states, action.payload]
+            }
+
         case DELETE_GROUP:
             return {
                 ...state,

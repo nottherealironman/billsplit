@@ -42,6 +42,28 @@ export const addGroup = (token, formData) => dispatch => {
     })
 }
 
+// This method will update group 
+export const updateGroup = (token, id, formData) => dispatch => {
+    fetch('http://localhost:3001/v1/groups/'+id,{
+        method: 'PUT',
+        headers: new Headers({
+            'Authorization': `JWT ${token}`,
+            'content-type': 'application/json'
+        }),
+        body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(updatedGroup =>{
+        dispatch({
+            type: UPDATE_GROUP,
+            payload: updatedGroup
+        });
+    })
+    .catch(error => {
+        console.log('error while updating group');
+    })
+}
+
 // This method will delete group 
 export const deleteGroup = (token, id) => dispatch => {
     fetch('http://localhost:3001/v1/groups/'+id,{
