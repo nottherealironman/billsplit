@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 // Components import 
 import Login from './Login';
 import Signup from './Signup';
-import Group from './Group';
+import Groups from './Groups';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { fetchUserInfo } from '../actions/userAction';
 
@@ -21,7 +21,7 @@ export class Routes extends Component {
         return (
             <div>
                 <Switch>
-                    <ProtectedRoute path='/app/group' user={this.props.user} component={Group}/> 
+                    <ProtectedRoute path='/app/groups' user={this.props.user} component={Groups}/> 
                     <Route path='/signup' component={Signup}/> 
                     <Route exact path='/' component={Login}/>
                 </Switch>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+var FA = require('react-fontawesome');
 
 class ResponsiveMenu extends Component {
     render() {
@@ -13,22 +14,22 @@ class ResponsiveMenu extends Component {
                         <ul className="nav navbar-nav ml-auto">
                             <li className="nav-item active">
                                 <Link className="nav-link" to="/groups">
-                                    <i className="fas fa-users" /> Group
+                                    <FA className="fas fa-users" /> Groups
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/members">
-                                    <i className="fas fa-user" /> Member
+                                    <FA className="fas fa-user" /> Members
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/bills">
-                                    <i className="fas fa-sticky-note" /> Bills
+                                    <FA className="fas fa-sticky-note" /> Bills
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/expenses">
-                                    <i className="fas fa-money-check-alt" /> Track Expenses
+                                    <FA className="fas fa-money" /> Track Expenses
                                 </Link>
                             </li>
                         </ul>

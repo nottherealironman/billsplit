@@ -34,7 +34,7 @@ class Login extends Component {
         if (token !== undefined) {
             localStorage.setItem('billsplit.token', token);
         }
-        this.props.history.push("/app/group");
+        this.props.history.push("/app/groups");
     }
 
     render() {

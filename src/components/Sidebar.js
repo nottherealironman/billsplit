@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom';
+var FA = require('react-fontawesome');
 
 class Sidebar extends Component {
     render() {
@@ -10,27 +11,27 @@ class Sidebar extends Component {
                 </div>
                 <ul className="list-unstyled components">
                     <li>
-                        <Link to="/groups">
-                            <i className="fas fa-users" />
-                                Group
+                        <Link to="groups">
+                            <FA className="fas fa-users" />
+                                Groups
                             </Link>
                     </li>
                     <li>
-                        <Link to="/members">
-                            <i className="fas fa-user" />
+                        <Link to="members">
+                            <FA className="fas fa-user" />
                                 Members
                             </Link>
                     </li>
                     <li>
-                        <Link to="/bills">
-                            <i className="fas fa-sticky-note" />
-                                Members
+                        <Link to="bills">
+                            <FA className="fas fa-sticky-note" />
+                                Bills
                             </Link>
                     </li>
                     <li>
-                        <Link to="/expenses">
-                            <i className="fas fa-money-check-alt" />
-                                Individual Share
+                        <Link to="expenses">
+                            <FA className="fas fa-money" />
+                            Track Expenses
                             </Link>
                     </li>
                 </ul>

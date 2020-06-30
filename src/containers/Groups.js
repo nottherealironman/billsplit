@@ -10,13 +10,12 @@ import Content from '../components/Content';
 
 const token = localStorage.getItem('billsplit.token');
 
-export class Group extends Component {
+export class Groups extends Component {
     
     constructor(props){
         super(props);
         this.state = {
-            addModalStatus:false,
-            //updateModalStatus:false,
+            addOrUpdateModalStatus:false,
             deleteModalStatus:false,
             currentGroupId:null,
             modelTitle: '',
@@ -24,14 +23,13 @@ export class Group extends Component {
             name:'',
             description:''
         }
-        //this.handleDeleteModal = this.handleDeleteModal.bind(this)
-        //this.handleEditModal = this.handleEditModal.bind(this);
     }
 
     componentWillMount() {
         this.props.fetchGroupList(token);
     }
 
+    // Search for specific id within an array
     search(nameKey, myArray){
         for (var i=0; i < myArray.length; i++) {
             if (myArray[i]._id === nameKey) {
@@ -42,21 +40,18 @@ export class Group extends Component {
 
     // Method to handle opening and closing of add modal
     handleAddModal (e, id){
-        this.setState({addModalStatus:!this.state.addModalStatus});
+        this.setState({addOrUpdateModalStatus:!this.state.addOrUpdateModalStatus});
         if(id != null){
-            console.log("Edit", id);
             const result = this.search(id, this.props.group);
             this.setState({modelTitle:'Update Group', id:id, name:result.name, description:result.description});
         }
         else {
-            console.log("Add");
             this.setState({modelTitle:'Add New Group', id:null, name:'', description:''});
         }
-        console.log(this.state.id != null ? 'Edit mode': 'Add mode')
     }
 
     /* handleAddModal = () => {
-        this.setState({addModalStatus:!this.state.addModalStatus});
+        this.setState({addOrUpdateModalStatus:!this.state.addOrUpdateModalStatus});
     } */
 
     // Method to handle data from group add form
@@ -66,18 +61,17 @@ export class Group extends Component {
 
     // Method to handle group creation
     addGroup = () => {
-        this.setState({addModalStatus:!this.state.addModalStatus});
+        this.setState({addOrUpdateModalStatus:!this.state.addOrUpdateModalStatus});
         const group = {
             name: this.state.name,
             description: this.state.description,
         }
         this.props.addGroup(token, group);
-        console.log(group);
     }
 
     // Method to handle group creation
     updateGroup = () => {
-        this.setState({addModalStatus:!this.state.addModalStatus});
+        this.setState({addOrUpdateModalStatus:!this.state.addOrUpdateModalStatus});
         const group = {
             name: this.state.name,
             description: this.state.description,
@@ -96,27 +90,6 @@ export class Group extends Component {
 
     // Method to confirm group delete
     deleteGroup(){
-        // Close the modal
-        this.setState({deleteModalStatus:!this.state.deleteModalStatus}); 
-        let id = this.state.currentGroupId;
-        // Delete the current group and fetch the updated group lists
-        if(id !== null){
-            this.props.deleteGroup(token, id);
-        }
-    }
-
-    // Method to handle opening and closing of edit modal
-    handleEditModal(id){
-        console.log("id",id);
-        /* this.setState({deleteModalStatus:!this.state.deleteModalStatus});  
-        // Store the current group id in state
-        if(id !== null){
-            this.setState({currentGroupId:id});
-        } */
-    }
-
-    // Method to confirm group edit
-    editGroup(){
         // Close the modal
         this.setState({deleteModalStatus:!this.state.deleteModalStatus}); 
         let id = this.state.currentGroupId;
@@ -175,8 +148,8 @@ export class Group extends Component {
                     </div>
                 </div>
 
-                {/* Add new group modal */}
-                <Modal show={this.state.addModalStatus} onHide={e => this.handleAddModal(e, null)}>
+                {/* Add new group or update group modal */}
+                <Modal show={this.state.addOrUpdateModalStatus} onHide={e => this.handleAddModal(e, null)}>
                     <Modal.Header closeButton>
                     <h5 className="modal-title" id="addModalLabel">{this.state.modelTitle}</h5>
                     </Modal.Header>
@@ -244,4 +217,4 @@ const mapDispatchToProps = (dispatch) => ({
     deleteGroup: (token, id) => dispatch(deleteGroup(token, id))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Group);
+export default connect(mapStateToProps, mapDispatchToProps)(Groups);
