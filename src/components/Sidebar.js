@@ -12,25 +12,25 @@ class Sidebar extends Component {
                 <ul className="list-unstyled components">
                     <li>
                         <Link to="groups">
-                            <FA className="fas fa-users" />
+                            <FA name="users" className="fas fa-users" />
                                 Groups
                             </Link>
                     </li>
                     <li>
                         <Link to="members">
-                            <FA className="fas fa-user" />
+                            <FA name="user" className="fas fa-user" />
                                 Members
                             </Link>
                     </li>
                     <li>
                         <Link to="bills">
-                            <FA className="fas fa-sticky-note" />
+                            <FA name="note" className="fas fa-sticky-note" />
                                 Bills
                             </Link>
                     </li>
                     <li>
                         <Link to="expenses">
-                            <FA className="fas fa-money" />
+                            <FA name="expense" className="fas fa-money" />
                             Track Expenses
                             </Link>
                     </li>

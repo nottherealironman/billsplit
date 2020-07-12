@@ -200,7 +200,7 @@ export class Groups extends Component {
         return (
             <div className="wrapper">
                 <Sidebar />
-                <Content content={this.content()} />
+                <Content content={this.content()} user={this.props.user}/>
             </div>
         )
     }

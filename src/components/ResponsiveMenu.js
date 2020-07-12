@@ -14,22 +14,22 @@ class ResponsiveMenu extends Component {
                         <ul className="nav navbar-nav ml-auto">
                             <li className="nav-item active">
                                 <Link className="nav-link" to="/groups">
-                                    <FA className="fas fa-users" /> Groups
+                                    <FA name="users" className="fas fa-users" /> Groups
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/members">
-                                    <FA className="fas fa-user" /> Members
+                                    <FA name="user" className="fas fa-user" /> Members
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/bills">
-                                    <FA className="fas fa-sticky-note" /> Bills
+                                    <FA name="note" className="fas fa-sticky-note" /> Bills
                                 </Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link" to="/expenses">
-                                    <FA className="fas fa-money" /> Track Expenses
+                                    <FA name="expense" className="fas fa-money" /> Track Expenses
                                 </Link>
                             </li>
                         </ul>

@@ -8,6 +8,7 @@ export class Content extends Component {
             <div id="content">
                 <div className="block"></div>
                 <ResponsiveMenu />
+                <h5>WELCOME {this.props.user.name}</h5>
                 {this.props.content}
             </div>
         )
