@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { fetchMemberList, searchMember, addMember, resetModalState } from '../actions/memberAction';
+import { fetchMemberList, searchMember, addMember, resetModalState, deleteMember } from '../actions/memberAction';
 import { fetchGroupList } from '../actions/groupAction';
 
 // Components import 
@@ -17,9 +17,11 @@ export class Members extends Component {
         this.state = {
             addOrUpdateModalStatus: false,
             deleteModalStatus: false,
-            currentMemberId: null,
+            currentUserId: null,
+            deleteUserId: null,
+            deleteGroupId: null,
             modelTitle: 'Add new member',
-            group_id: null,
+            groupId: null,
             email: ''
         }
     }
@@ -27,31 +29,31 @@ export class Members extends Component {
     componentWillMount() {
         this.props.fetchGroupList(token);
         this.props.fetchMemberList(token);
+        this.setState({ currentUserId : this.props.user.id });
     }
 
     // Method to handle data from group add form
     onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({ groupId: e.target.value });
     }
 
     // Method to track keyboard input
     onEmailChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-        this.props.searchMember(token, e.target.value, this.state.group_id);
+        this.setState({ email: e.target.value });
+        this.props.searchMember(token, e.target.value, this.state.groupId);
     }
 
     // Method to handle opening and closing of add modal
     handleAddModal(e, closeStatus) {
         this.setState({ addOrUpdateModalStatus: !this.state.addOrUpdateModalStatus, modelTitle: 'Add New Member' });
-        console.log(closeStatus, "close status")
         // If modal is closed, reset the modal state
-        if(closeStatus){
+        if (closeStatus) {
             this.props.resetModalState();
         }
     }
 
     // Method to handle member add
-    addMember (e, user_id, group_id) {
+    addMember(e, user_id, group_id) {
         e.preventDefault();
         const member = {
             user_id: user_id,
@@ -63,18 +65,34 @@ export class Members extends Component {
 
     // Method to handle opening and closing of delete modal
     handleDeleteModal(e, user_id, group_id) {
-        /* this.setState({ deleteModalStatus: !this.state.deleteModalStatus });
+        this.setState({ deleteModalStatus: !this.state.deleteModalStatus });
         // Store the current group id in state
-        if (id !== null) {
-            this.setState({ currentGroupId: id });
-        } */
+        if (user_id !== null && group_id !== null) {
+            this.setState({ deleteUserId: user_id, deleteGroupId: group_id });
+        }
+    }
+
+    deleteMember(e){
+        this.setState({ deleteModalStatus: !this.state.deleteModalStatus });
+        this.props.deleteMember(token, this.state.deleteUserId, this.state.deleteGroupId);
+    }
+
+    // Method to display groups in drop-down list of member add form
+    displayGroups(groups) {
+        return Object.keys(groups).map((key, value) => {
+            return (
+                <React.Fragment key={key}>
+                    <option value={groups[key]._id}>{groups[key].name}</option>
+                </React.Fragment>
+            );
+        });
     }
 
     // Method to display member list on search by email while adding new member
     memberSearchList() {
         let users = this.props.searchList;
         return Object.keys(users).map((key, value) => {
-            if(users[key].members.length > 0){
+            if (users[key].members.length > 0) {
                 return (
                     <li className="list-group-item">
                         {users[key].name}
@@ -82,11 +100,11 @@ export class Members extends Component {
                     </li>
                 )
             }
-            else{
+            else {
                 return (
                     <li className="list-group-item">
                         {users[key].name}
-                        <Button variant="success" type="button" className="float-right" onClick={e => this.addMember(e, users[key]._id, this.state.group_id)}> Add </Button>
+                        <Button variant="success" type="button" className="float-right" onClick={e => this.addMember(e, users[key]._id, this.state.groupId)}> Add </Button>
                     </li>
                 )
             }
@@ -94,28 +112,6 @@ export class Members extends Component {
 
     }
 
-    // Method to display 
-    /* displayMemberList(list, group_name, group_id) {
-        let count = 0;
-        return Object.keys(list).map((key, value) => {
-            count++;
-            return (
-                <React.Fragment>
-                    <tr key={key}>
-                        {count === 1 ? <td rowSpan={list.length}>{group_name}</td> : null}
-                        <td scope='row'>{list[key].name}</td>
-                        <td>
-                            <Button variant="danger" onClick={e => this.handleDeleteModal(e, list[key]._id, group_id)}>
-                                Delete
-                            </Button>
-                        </td>
-                    </tr>
-                </React.Fragment>
-            )
-        });
-    } */
-
-    
     // Method to display members row
     displayMember = (members) => {
         return Object.keys(members).map((membersKey, value) => {
@@ -126,31 +122,17 @@ export class Members extends Component {
             return Object.keys(list).map((key, value) => {
                 count++;
                 return (
-                    <React.Fragment>
-                        <tr key={key}>
-                            {count === 1 ? <td rowSpan={list.length}>{group_name}</td> : null}
-                            <td scope='row'>{list[key].name}</td>
-                            <td>
-                                <Button variant="danger" onClick={e => this.handleDeleteModal(e, list[key]._id, group_id)}>
-                                    Delete
+                    <tr key={key}>
+                        {count === 1 ? <td rowSpan={list.length}>{group_name}</td> : null}
+                        <td scope='row'>{ list[key]._id === this.state.currentUserId ? 'You': list[key].name}</td>
+                        <td>
+                            <Button variant="danger" onClick={e => this.handleDeleteModal(e, list[key]._id, group_id)}>
+                                Delete
                                 </Button>
-                            </td>
-                        </tr>
-                    </React.Fragment>
+                        </td>
+                    </tr>
                 )
             });
-            //return (this.displayMemberList(members[membersKey].user_info, members[membersKey].group_name, members[membersKey]._id));
-        });
-    }
-
-    // Method to display groups in drop-down list of member add form
-    displayGroups(groups) {
-        return Object.keys(groups).map((key, value) => {
-            return (
-                <React.Fragment>
-                    <option value={groups[key]._id}>{groups[key].name}</option>
-                </React.Fragment>
-            );
         });
     }
 
@@ -213,12 +195,29 @@ export class Members extends Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
+
+                {/* Delete group modal */}
+                <Modal show={this.state.deleteModalStatus} onHide={e => this.handleDeleteModal(e, null, null)}>
+                    <Modal.Header closeButton>
+                    <h5 className="modal-title" id="addModalLabel">Delete member</h5>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <p>Are you sure you want to delete this member?</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={e => this.handleDeleteModal(e, null, null)}>
+                        No
+                    </Button>
+                    <Button variant="primary" onClick={e => this.deleteMember(e)}>
+                        Yes
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         );
     }
 
     render() {
-        console.log(this.props.groups)
         return (
             <div className="wrapper">
                 <Sidebar />
@@ -240,6 +239,7 @@ const mapDispatchToProps = (dispatch) => ({
     resetModalState: () => dispatch(resetModalState()),
     addMember: (token, user_id, group_id) => dispatch(addMember(token, user_id, group_id)),
     fetchGroupList: (token) => dispatch(fetchGroupList(token)),
+    deleteMember : (token, user_id, group_id) => dispatch(deleteMember(token, user_id, group_id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Members);

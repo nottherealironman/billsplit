@@ -187,7 +187,8 @@ module.exports.create = async (req, res) => {
 
 // Method to delete member
 module.exports.delete = async (req, res) => {
-  const member = await Member.findByIdAndDelete(req.params.id);
+
+  const member = await Member.deleteMany({'user_id':req.params.user_id, 'group_id':req.params.group_id});
   console.log(member.group_id);
 
   try{
@@ -195,7 +196,7 @@ module.exports.delete = async (req, res) => {
       return res.status(404).send({'msg': 'No member found'});
     }
     // Delete bill paid by that member if member is deleted
-    await Bill.deleteMany({'member_id':req.params.id, 'group_id':member.group_id});
+    await Bill.deleteMany({'member_id':req.params.user_id, 'group_id':req.params.group_id});
     res.status(200).json({'msg':'Member deleted successfully'});
   }
   catch (error) {
