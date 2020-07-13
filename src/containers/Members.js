@@ -114,6 +114,7 @@ export class Members extends Component {
 
     // Method to display members row
     displayMember = (members) => {
+        console.log("lists: ",members)
         return Object.keys(members).map((membersKey, value) => {
             let count = 0;
             let list = members[membersKey].user_info;

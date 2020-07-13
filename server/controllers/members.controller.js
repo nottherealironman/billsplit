@@ -189,7 +189,7 @@ module.exports.create = async (req, res) => {
 module.exports.delete = async (req, res) => {
 
   const member = await Member.deleteMany({'user_id':req.params.user_id, 'group_id':req.params.group_id});
-  console.log(member.group_id);
+  console.log(member);
 
   try{
     if(!member){
@@ -197,7 +197,9 @@ module.exports.delete = async (req, res) => {
     }
     // Delete bill paid by that member if member is deleted
     await Bill.deleteMany({'member_id':req.params.user_id, 'group_id':req.params.group_id});
-    res.status(200).json({'msg':'Member deleted successfully'});
+    res.status(200).json({
+      'msg':'Member deleted successfully'
+    });
   }
   catch (error) {
     console.log(error);

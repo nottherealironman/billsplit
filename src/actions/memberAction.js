@@ -87,8 +87,10 @@ export const deleteMember = (token, user_id, group_id) => dispatch => {
         console.log(msg);
         dispatch({
             type: DELETE_MEMBER,
-            user_id: user_id,
-            group_id: group_id
+            payload: {
+                user_id,
+                group_id
+            }
         });
     })
     .catch(error => {
