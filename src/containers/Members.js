@@ -60,7 +60,6 @@ export class Members extends Component {
             group_id: group_id,
         }
         this.props.addMember(token, member);
-        this.props.fetchMemberList(token);
     }
 
     // Method to handle opening and closing of delete modal
@@ -72,6 +71,7 @@ export class Members extends Component {
         }
     }
 
+    // Method to delete member from group
     deleteMember(e){
         this.setState({ deleteModalStatus: !this.state.deleteModalStatus });
         this.props.deleteMember(token, this.state.deleteUserId, this.state.deleteGroupId);
