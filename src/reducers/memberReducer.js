@@ -7,7 +7,7 @@ const initialState = {
 
 export default function (state = initialState, action) {
     let currentState;
-    let updatedState = [];;
+    let updatedState = [];
     switch (action.type) {
         case FETCH_MEMBER_LIST:
             return {
@@ -33,6 +33,8 @@ export default function (state = initialState, action) {
             updatedState = [];
             // Loop through the current state and add newly added member to the state
             Object.keys(currentState).map((key, val) => {
+                /* Checking if the group matches with the group of newly retrieved member
+                so that if it matches then push the member to that group */
                 if (currentState[key]._id === action.payload.group_id) {
                     let newUserInfo = [
                             ...currentState[key].user_info, 

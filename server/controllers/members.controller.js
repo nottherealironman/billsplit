@@ -146,7 +146,6 @@ module.exports.create = async (req, res) => {
   try {
       const data = await member.save();
       const user = await User.findById(user_id);
-      console.log("user",user.name)
       // Send response if success
       res.status(201).json({
         user_id:data.user_id,

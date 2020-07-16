@@ -4,9 +4,43 @@ const Member = require('../models/MemberModel');
 
 // Method to get all bills
 module.exports.getAll = async (req, res) => {
-  const bills = await Bill.find();
-  console.log(bills);
+  
   try{
+    const bills = await Bill.aggregate([
+      {
+        $lookup: {
+          from: "groups",
+          localField: "group_id",
+          foreignField: "_id",
+          as: "groups"
+        }
+      },
+      {
+        "$unwind": "$groups"
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users"
+        }
+      },
+      {
+        "$unwind": "$users"
+      },
+      {
+        $project: {
+          _id:1,
+          title: 1,
+          amount: 1,
+          "groups.name":1,
+          "users.name":1,
+          "users._id":1
+        }
+      }
+    ]);
+    console.log(bills);
     res.status(200).json(bills);
   }
   catch (error) {
@@ -16,9 +50,7 @@ module.exports.getAll = async (req, res) => {
 }
 
 // Method to get member of particular group
-module.exports.getGroupMember = async (req, res) => {
-  //console.log('hello')
-  console.log(req.params.group_id)
+module.exports.getGroupMembers = async (req, res) => {
   const group_members = await Member.find({'group_id':req.params.group_id});
   console.log(group_members);
   try{
@@ -32,22 +64,59 @@ module.exports.getGroupMember = async (req, res) => {
 
 // Method to add new bill
 module.exports.add = async (req, res) => {
-  const { title, amount, group_id, member_id } = req.body;
-  console.log(title, amount, group_id, member_id);
+  const { title, amount, group_id, user_id } = req.body;
+  console.log(title, amount, group_id, user_id);
   
-  const bill = new Bill({
-      title, amount, group_id, member_id
-    });
     try {
-      const data = await bill.save();
-      // Send response if success
-      res.status(200).json({
-        title: data.title, 
-        amount: data.amount, 
-        group_id: data.group_id, 
-        member_id: data.member_id,
-        bill_id:data._id,
+      const newBill = new Bill({
+        title, 
+        amount, 
+        group_id, 
+        user_id
       });
+      const data = await newBill.save();
+
+      const bill = await Bill.aggregate([
+        {
+          "$match": {
+            _id: data._id
+          }
+        },
+        {
+          $lookup: {
+            from: "groups",
+            localField: "group_id",
+            foreignField: "_id",
+            as: "groups"
+          }
+        },
+        {
+          "$unwind": "$groups"
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "users"
+          }
+        },
+        {
+          "$unwind": "$users"
+        },
+        {
+          $project: {
+            _id:1,
+            title: 1,
+            amount: 1,
+            "groups.name":1,
+            "users.name":1,
+            "users._id":1
+          }
+        }
+      ]);
+      // Send response if success
+      res.status(200).json(bill[0]);
     } catch (error) {
       console.log(error);
       res.status(400).send('Failed to create bill');

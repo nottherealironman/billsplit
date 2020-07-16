@@ -7,6 +7,7 @@ import Login from './Login';
 import Signup from './Signup';
 import Groups from './Groups';
 import Members from './Members';
+import Bills from './Bills';
 import { ProtectedRoute } from '../components/ProtectedRoute';
 import { fetchUserInfo } from '../actions/userAction';
 
@@ -24,6 +25,7 @@ export class Routes extends Component {
                 <Switch>
                     <ProtectedRoute path='/app/groups' user={this.props.user} component={Groups}/>
                     <ProtectedRoute path='/app/members' user={this.props.user} component={Members}/> 
+                    <ProtectedRoute path='/app/bills' user={this.props.user} component={Bills}/> 
                     <Route path='/signup' component={Signup}/> 
                     <Route exact path='/' component={Login}/>
                 </Switch>
