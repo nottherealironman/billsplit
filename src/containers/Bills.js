@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { fetchBillList, addBill } from '../actions/billAction';
-import { searchMember, addMember, resetModalState, deleteMember } from '../actions/memberAction';
+import { fetchBillList, addBill, deleteBill } from '../actions/billAction';
 import { fetchGroupList } from '../actions/groupAction';
 
 // Components import 
@@ -25,7 +24,6 @@ export class Bills extends Component {
             billTitle: '',
             billAmount: '',
             billGroupId: 'null',
-            email: ''
         }
     }
 
@@ -41,22 +39,8 @@ export class Bills extends Component {
     }
 
     // Method to handle opening and closing of add modal
-    handleAddModal(e, closeStatus) {
+    handleAddModal(e) {
         this.setState({ addOrUpdateModalStatus: !this.state.addOrUpdateModalStatus, modelTitle: 'Add new bill' });
-        // If modal is closed, reset the modal state
-        if (closeStatus) {
-            this.props.resetModalState();
-        }
-    }
-
-    // Method to handle member add
-    addMember(e, user_id, group_id) {
-        e.preventDefault();
-        const member = {
-            user_id: user_id,
-            group_id: group_id,
-        }
-        this.props.addMember(token, member);
     }
 
     // Method to add new bill
@@ -79,8 +63,9 @@ export class Bills extends Component {
 
     // Method to delete bill
     deleteBill(e) {
+        console.log(this.state.deleteBillId);
         this.setState({ deleteModalStatus: !this.state.deleteModalStatus });
-        this.props.deleteMember(token, this.state.deleteUserId, this.state.deleteGroupId);
+        this.props.deleteBill(token, this.state.deleteBillId);
     }
 
     // Method to display groups in drop-down list of member add form
@@ -138,7 +123,7 @@ export class Bills extends Component {
                         <div className="card h-100">
                             <div className="card-body">
                                 <center>
-                                    <Button variant="light" onClick={e => this.handleAddModal(e, null)}>
+                                    <Button variant="light" onClick={e => this.handleAddModal(e)}>
                                         <img src="/add-icon.png" className="pt-20" alt="Card image cap" width="150 px" height="150 px" />
                                     </Button>
                                 </center>
@@ -151,11 +136,11 @@ export class Bills extends Component {
                         </div>
                     </div>
 
-                    {this.props.bills.length ? this.displayBill(this.props.bills) : <div>'No bills found!'</div>}
+                    {this.props.bills.length ? this.displayBill(this.props.bills) : <div></div>}
                 </div>
 
                 {/* Add new bill modal */}
-                <Modal show={this.state.addOrUpdateModalStatus} onHide={e => this.handleAddModal(e, true)}>
+                <Modal show={this.state.addOrUpdateModalStatus} onHide={e => this.handleAddModal(e)}>
                     <Modal.Header closeButton>
                         <h5 className="modal-title" id="addModalLabel">{this.state.modelTitle}</h5>
                     </Modal.Header>
@@ -179,15 +164,10 @@ export class Bills extends Component {
                                     {this.displayGroups(this.props.groups)}
                                 </select>
                             </div>
-                            {/* <div className={this.state.groupId === 'null'? 'd-none form-group js-member-wrapper':'form-group js-member-wrapper'} >
-                                <label htmlFor="member">Paid by</label>
-                                <select name="member_id" id="js-member" className="form-control">
-                                </select>
-                            </div> */}
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={e => this.handleAddModal(e, true)}>
+                        <Button variant="secondary" onClick={e => this.handleAddModal(e)}>
                             Close
                         </Button>
                         <Button variant="primary" onClick={this.state.billId != null ? e => this.updateBill(e) : e => this.addBill(e)}>
@@ -229,19 +209,14 @@ export class Bills extends Component {
 
 const mapStateToProps = (state) => ({
     bills: state.bills.lists,
-    searchList: state.members.searchList,
     groups: state.group.lists,
 });
 
 const mapDispatchToProps = (dispatch) => ({
     fetchBillList: (token) => dispatch(fetchBillList(token)),
     addBill: (token, bill) => dispatch(addBill(token, bill)),
-
-    searchMember: (token, email, group_id) => dispatch(searchMember(token, email, group_id)),
-    resetModalState: () => dispatch(resetModalState()),
-    addMember: (token, user_id, group_id) => dispatch(addMember(token, user_id, group_id)),
+    deleteBill: (token, bill_id) => dispatch(deleteBill(token, bill_id)),
     fetchGroupList: (token) => dispatch(fetchGroupList(token)),
-    deleteMember: (token, user_id, group_id) => dispatch(deleteMember(token, user_id, group_id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Bills);

@@ -21,14 +21,14 @@ export const fetchMemberList = (token) => dispatch => {
 }
 
 // Method to search members while adding in a group
-export const searchMember = (token, email, group_id) => dispatch => {
+export const searchMember = (token, email, groupId) => dispatch => {
     fetch('http://localhost:3001/v1/members/search',{
         method: 'POST',
         headers: new Headers({
             'Authorization': `JWT ${token}`,
             'content-type': 'application/json'
         }),
-        body: JSON.stringify({'email':email, 'group_id': group_id})
+        body: JSON.stringify({'email':email, 'group_id': groupId})
     })
     .then(res => res.json())
     .then(member =>{
@@ -74,8 +74,8 @@ export const addMember = (token, member) => dispatch => {
 }
 
 // Method to delete member from a group
-export const deleteMember = (token, user_id, group_id) => dispatch => {
-    fetch('http://localhost:3001/v1/members/'+user_id+'/'+group_id,{
+export const deleteMember = (token, userId, groupId) => dispatch => {
+    fetch('http://localhost:3001/v1/members/'+userId+'/'+groupId,{
         method: 'DELETE',
         headers: new Headers({
             'Authorization': `JWT ${token}`,
@@ -88,8 +88,8 @@ export const deleteMember = (token, user_id, group_id) => dispatch => {
         dispatch({
             type: DELETE_MEMBER,
             payload: {
-                user_id,
-                group_id
+                userId,
+                groupId
             }
         });
     })

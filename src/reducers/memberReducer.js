@@ -81,9 +81,9 @@ export default function (state = initialState, action) {
             currentState = state.lists;
             // Delete the member from state tree whose group_id and user_id matches with member in the states
             Object.keys(currentState).map((key, val) => {
-                if (currentState[key]._id === action.payload.group_id) {
+                if (currentState[key]._id === action.payload.groupId) {
                     // Only return users whose user_id does not match with deleted user
-                    let newUserInfo = currentState[key].user_info.filter(el => el._id !== action.payload.user_id);
+                    let newUserInfo = currentState[key].user_info.filter(el => el._id !== action.payload.userId);
                     let newArr = { 
                         _id: currentState[key]._id, 
                         group_name: currentState[key].group_name, 

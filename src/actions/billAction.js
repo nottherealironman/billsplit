@@ -1,4 +1,4 @@
-import { FETCH_BILL_LIST, ADD_BILL } from './constants/action-types';
+import { FETCH_BILL_LIST, ADD_BILL, DELETE_BILL } from './constants/action-types';
 
 export const fetchBillList = (token) => dispatch =>{
     fetch('http://localhost:3001/v1/bills',{
@@ -39,5 +39,27 @@ export const addBill = (token, newBill) => dispatch => {
     })
     .catch(error => {
         console.log('error while adding bill');
+    })
+}
+
+// Method to delete bill 
+export const deleteBill = (token, billId) => dispatch => {
+    fetch('http://localhost:3001/v1/bills/'+billId,{
+        method: 'DELETE',
+        headers: new Headers({
+            'Authorization': `JWT ${token}`,
+            'content-type': 'application/json'
+        }),
+    })
+    .then(res => res.json())
+    .then(bill =>{
+        console.log(bill);
+        dispatch({
+            type: DELETE_BILL,
+            payload: bill._id
+        });
+    })
+    .catch(error => {
+        console.log('error while deleting bill');
     })
 }

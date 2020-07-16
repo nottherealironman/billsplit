@@ -1,6 +1,5 @@
 const config = require('../config');
 const Bill = require('../models/BillModel');
-const Member = require('../models/MemberModel');
 
 // Method to get all bills
 module.exports.getAll = async (req, res) => {
@@ -46,19 +45,6 @@ module.exports.getAll = async (req, res) => {
   catch (error) {
     console.log(error);
     res.status(400).send('Failed to fetch bill');
-  }
-}
-
-// Method to get member of particular group
-module.exports.getGroupMembers = async (req, res) => {
-  const group_members = await Member.find({'group_id':req.params.group_id});
-  console.log(group_members);
-  try{
-    res.status(200).json(group_members);
-  }
-  catch (error) {
-    console.log(error);
-    res.status(400).send('Failed to fetch group members');
   }
 }
 
@@ -132,7 +118,9 @@ module.exports.delete = async (req, res) => {
     if(!bill){
       res.status(404).send('No bill found');
     }
-    res.status(200).json(bill);
+    res.status(200).json({
+      msg:'Bill successfully deleted!', 
+      _id: bill.id});
   }
   catch (error) {
     console.log(error);
