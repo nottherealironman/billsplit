@@ -5,42 +5,45 @@ const Group = require('../models/GroupModel');
 
 // Method to get the summary of each group
 module.exports.getGroupSummary = async (req, res) => {
-  const groups = await Group.find();
-  
+  // Get req.userId from header token
+  const member = await Member.find({'user_id':req.userId});
+  let groupIds = []; 
+  for (let m of member){
+    groupIds.push(m.group_id);
+  }
   try{
-      var group_summary = [];
-      //groups.forEach(function (val, key) {
-      for (const val of groups){
-        var group = {};
-        group['id'] = val._id;
-        group['group_name'] = val.name;
-        
-        const bill = Bill.aggregate([
-        {
-          $match : { group_id: val._id }
-        },
-        {
-          $group : {
-             _id:null,
-             total :{
-              $sum:'$amount'
-             }
+        const groups = await Bill.aggregate([
+          {$match : {group_id : {$in : groupIds}}}, // Only match the groups in which user is a member
+          {
+            $lookup: {
+              from: "groups",
+              localField: "group_id",
+              foreignField: "_id",
+              as: "groups"
+            }
+          },
+          {
+            $unwind: "$groups"
+          },
+          {
+            $group: {
+              _id:"$groups._id",
+              group_name: {
+                $first: "$groups.name"
+              },
+              total :{
+                $sum:'$amount'
+               }
+            }
           }
-        }
         ]);
-        group['total'] = 0;
-        for await (const b of bill) {
-          console.log(b.total);
-          group['total'] = b.total;
-        }
-        
-        group_summary.push(group);
-    }
-    res.status(200).json(group_summary);
+    //}
+    console.log(groups)
+    res.status(200).json(groups);
   }
   catch (error) {
     console.log(error);
-    res.status(400).send('Failed to fetch groups');
+    res.status(400).send('Failed to fetch groups summary');
   }
 }
 

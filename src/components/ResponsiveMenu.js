@@ -28,7 +28,7 @@ class ResponsiveMenu extends Component {
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/expenses">
+                                <Link className="nav-link" to="/track-expenses">
                                     <FA name="expense" className="fas fa-money" /> Track Expenses
                                 </Link>
                             </li>

@@ -29,7 +29,7 @@ class Sidebar extends Component {
                             </Link>
                     </li>
                     <li>
-                        <Link to="expenses">
+                        <Link to="track-expenses">
                             <FA name="expense" className="fas fa-money" />
                             Track Expenses
                             </Link>
