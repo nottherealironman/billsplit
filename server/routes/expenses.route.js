@@ -4,7 +4,7 @@ const auth = require('../middlewares/auth.middleware');
 const expensesRoutes = express.Router();
 
 // Routes for bill 
-expensesRoutes.get('/summary', auth.checkAuth, expensesController.getGroupSummary);
-expensesRoutes.get('/details/:group_id', auth.checkAuth, expensesController.getGroupDetails);
+expensesRoutes.get('/summary', auth.checkAuth, expensesController.getExpenseSummary);
+expensesRoutes.get('/details/:group_id', auth.checkAuth, expensesController.getExpenseDetails);
 
 module.exports = expensesRoutes;

@@ -1,24 +1,23 @@
-import { FETCH_GROUP_EXPENSES_SUMMARY, /* FETCH_GROUP_EXPENSES_DETAILS */ } from '../actions/constants/action-types';
+import { FETCH_GROUP_EXPENSES_SUMMARY, FETCH_GROUP_EXPENSES_DETAILS } from '../actions/constants/action-types';
 
 const initialState = {
-    lists: {},
+    summary: {},
+    details: {},
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
-
         case FETCH_GROUP_EXPENSES_SUMMARY:
             return {
                 ...state,
-                lists: action.payload
+                summary: action.payload
             }
         
-        /* case FETCH_GROUP_EXPENSES_DETAILS:
-            currentState = state.lists;
+        case FETCH_GROUP_EXPENSES_DETAILS:
             return {
                 ...state,
-                lists: [...currentState, action.payload]
-            } */
+                details:  action.payload
+            }
 
         default:
             return state;

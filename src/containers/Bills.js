@@ -89,7 +89,7 @@ export class Bills extends Component {
             let amount = bills[billsKey].amount;
             let paid_by = bills[billsKey].users._id === this.state.currentUserId ? 'You' : bills[billsKey].users.name;
             return (
-                <div className="col-md-3 mb-25 js-bill-item">
+                <div className="col-md-3 mb-25" key={billsKey}>
                     <div className="card h-100">
                         <div className="card-body">
                             <h6 className="card-subtitle mb-2 text-muted">{title}</h6>

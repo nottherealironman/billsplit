@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal, Button, } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { fetchGroupSummary } from '../actions/expensesAction';
+import { fetchExpenseSummary, fetchExpenseDetails } from '../actions/expensesAction';
 
 // Components import 
 import Sidebar from '../components/Sidebar';
@@ -17,29 +17,31 @@ export class TrackExpenses extends Component {
             detailsModalStatus: false,
             currentUserId: null,
             modelTitle: 'Expenses details',
-            groupId: 'null',
+            groupId: null,
         }
     }
 
     componentWillMount() {
-        this.props.fetchGroupSummary(token);
+        this.props.fetchExpenseSummary(token);
         this.setState({ currentUserId: this.props.user.id });
     }
 
     // Method to handle opening and closing of add modal
-    handleDetailsModal(e) {
-        this.setState({ detailsModalStatus: !this.state.detailsModalStatus, modelTitle: 'Add new bill' });
+    handleDetailsModal(e, group_id) {
+        this.setState({ detailsModalStatus: !this.state.detailsModalStatus, groupId: group_id});
+        if(group_id != null){
+            this.props.fetchExpenseDetails(token, group_id);
+        }
     }
 
     // Method to display expenses summary
-    displayExpenseSummary = (bills) => {
-        console.log("lists: ", bills)
-        return Object.keys(bills).map((billsKey, value) => {
-            let id = bills[billsKey]._id;
-            let group_name = bills[billsKey].group_name;
-            let amount = bills[billsKey].total;
+    displayExpenseSummary = (expenses) => {
+        return Object.keys(expenses).map((key, value) => {
+            let group_id = expenses[key]._id;
+            let group_name = expenses[key].group_name;
+            let amount = expenses[key].total;
             return (
-                <div className="col-md-3 mb-25 js-bill-item">
+                <div className="col-md-3 mb-25" key={key}>
                     <div className="card h-100">
                         <div className="card-body">{/* 
                             <h6 className="card-subtitle mb-2 text-muted">{title}</h6> */}
@@ -52,7 +54,7 @@ export class TrackExpenses extends Component {
                             <Button
                                 className="btn btn btn-outline-danger btn-block js-btn-delete"
                                 title="Delete"
-                                onClick={e => this.handleDetailsModal(e, id)}>
+                                onClick={e => this.handleDetailsModal(e, group_id)}>
                                 Details
                                 </Button>
                         </div>
@@ -60,6 +62,33 @@ export class TrackExpenses extends Component {
                 </div>);
         });
     }
+
+     // Method to display expenses details
+     displayExpenseDetails = (details) => {
+        return Object.keys(details).map((key, value) => {
+            let html="";
+            if(details[key].share > 0){
+                return(
+                    <React.Fragment key={key}>
+                        <dt>{details[key].name}</dt>
+                        <dd> Amount contribured: ${details[key].spent}</dd>
+                        <dd>Amount to be received: $ {details[key].share}</dd>
+                    </React.Fragment>
+                );
+               
+            }
+            else{
+                return(
+                    <React.Fragment key={key}>
+                        <dt>{details[key].name}</dt>
+                        <dd> Amount contribured: ${details[key].spent}</dd>
+                        <dd>Amount to be given: $ {Math.abs(details[key].share)}</dd>
+                    </React.Fragment>
+                );
+            }
+            
+        });
+     }
 
     // Method to display the content of page
     content() {
@@ -72,27 +101,19 @@ export class TrackExpenses extends Component {
                 </div>
 
                 {/* Group summary details modal */}
-                <Modal show={this.state.detailsModalStatus} onHide={e => this.handleDetailsModal(e)}>
+                <Modal show={this.state.detailsModalStatus} onHide={e => this.handleDetailsModal(e, null)}>
                     <Modal.Header closeButton>
                         <h5 className="modal-title" id="addModalLabel">{this.state.modelTitle}</h5>
                     </Modal.Header>
                     <Modal.Body>
-                        <form method="post" id="bill-form">
-                            <div className="form-group">
-                                <label htmlFor="name">Title</label>
-                                <input type="text" name="billTitle" className="form-control" onChange={e => this.onChange(e)} placeholder="Enter title for bill" />
+                        <div className="row">
+                            <div className="col-md-12">
+                                {this.displayExpenseDetails(this.props.details)}
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="amount">Amount</label>
-                                <div className="input-group">
-                                    <span className="input-group-prepend input-group-text">$</span>
-                                    <input type="text" name="billAmount" className="form-control" onChange={e => this.onChange(e)} placeholder="Enter amount paid" />
-                                </div>
-                            </div>
-                        </form>
+                        </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={e => this.handleDetailsModal(e)}>
+                        <Button variant="secondary" onClick={e => this.handleDetailsModal(e, null)}>
                             Close
                         </Button>
                     </Modal.Footer>
@@ -112,11 +133,13 @@ export class TrackExpenses extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    expenses: state.expenses.lists,
+    expenses: state.expenses.summary,
+    details: state.expenses.details,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    fetchGroupSummary: (token) => dispatch(fetchGroupSummary(token)),
+    fetchExpenseSummary: (token) => dispatch(fetchExpenseSummary(token)),
+    fetchExpenseDetails : (token, group_id) => dispatch(fetchExpenseDetails(token, group_id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TrackExpenses);
