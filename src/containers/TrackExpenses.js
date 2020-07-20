@@ -5,9 +5,9 @@ import { fetchExpenseSummary, fetchExpenseDetails } from '../actions/expensesAct
 
 // Components import 
 import Sidebar from '../components/Sidebar';
-import Content from '../components/Content';
+import Content from './Content';
 
-const token = localStorage.getItem('billsplit.token');
+var token;
 
 export class TrackExpenses extends Component {
 
@@ -16,19 +16,20 @@ export class TrackExpenses extends Component {
         this.state = {
             detailsModalStatus: false,
             currentUserId: null,
-            modelTitle: 'Expenses details',
             groupId: null,
+            groupName: '',
         }
     }
 
     componentWillMount() {
+        token = localStorage.getItem('billsplit.token') || this.props.user.token;
         this.props.fetchExpenseSummary(token);
         this.setState({ currentUserId: this.props.user.id });
     }
 
     // Method to handle opening and closing of add modal
-    handleDetailsModal(e, group_id) {
-        this.setState({ detailsModalStatus: !this.state.detailsModalStatus, groupId: group_id});
+    handleDetailsModal(e, group_id, group_name='') {
+        this.setState({ detailsModalStatus: !this.state.detailsModalStatus, groupId: group_id, groupName: group_name});
         if(group_id != null){
             this.props.fetchExpenseDetails(token, group_id);
         }
@@ -54,7 +55,7 @@ export class TrackExpenses extends Component {
                             <Button
                                 className="btn btn btn-outline-danger btn-block js-btn-delete"
                                 title="Delete"
-                                onClick={e => this.handleDetailsModal(e, group_id)}>
+                                onClick={e => this.handleDetailsModal(e, group_id, group_name)}>
                                 Details
                                 </Button>
                         </div>
@@ -66,13 +67,12 @@ export class TrackExpenses extends Component {
      // Method to display expenses details
      displayExpenseDetails = (details) => {
         return Object.keys(details).map((key, value) => {
-            let html="";
             if(details[key].share > 0){
                 return(
                     <React.Fragment key={key}>
                         <dt>{details[key].name}</dt>
                         <dd> Amount contribured: ${details[key].spent}</dd>
-                        <dd>Amount to be received: $ {details[key].share}</dd>
+                        <dd> Amount to be received: $ {details[key].share}</dd>
                     </React.Fragment>
                 );
                
@@ -81,8 +81,8 @@ export class TrackExpenses extends Component {
                 return(
                     <React.Fragment key={key}>
                         <dt>{details[key].name}</dt>
-                        <dd> Amount contribured: ${details[key].spent}</dd>
-                        <dd>Amount to be given: $ {Math.abs(details[key].share)}</dd>
+                        <dd> Amount contribured: $ {details[key].spent}</dd>
+                        <dd> Amount to be given: $ {Math.abs(details[key].share)}</dd>
                     </React.Fragment>
                 );
             }
@@ -103,7 +103,7 @@ export class TrackExpenses extends Component {
                 {/* Group summary details modal */}
                 <Modal show={this.state.detailsModalStatus} onHide={e => this.handleDetailsModal(e, null)}>
                     <Modal.Header closeButton>
-                        <h5 className="modal-title" id="addModalLabel">{this.state.modelTitle}</h5>
+                        <h5 className="modal-title" id="addModalLabel">Expenses details of <strong>{this.state.groupName}</strong></h5>
                     </Modal.Header>
                     <Modal.Body>
                         <div className="row">

@@ -6,9 +6,9 @@ import { fetchGroupList } from '../actions/groupAction';
 
 // Components import 
 import Sidebar from '../components/Sidebar';
-import Content from '../components/Content';
+import Content from './Content';
 
-const token = localStorage.getItem('billsplit.token');
+var token;
 
 export class Members extends Component {
 
@@ -27,6 +27,7 @@ export class Members extends Component {
     }
 
     componentWillMount() {
+        token = localStorage.getItem('billsplit.token') || this.props.user.token;
         this.props.fetchGroupList(token);
         this.props.fetchMemberList(token);
         this.setState({ currentUserId : this.props.user.id });

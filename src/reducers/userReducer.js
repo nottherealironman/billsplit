@@ -1,4 +1,4 @@
-import { LOGIN, SIGNUP, FETCH_USER_INFO } from '../actions/constants/action-types';
+import { LOGIN, SIGNUP, FETCH_USER_INFO, LOGOUT } from '../actions/constants/action-types';
 
 const initialState = {
     info: {}
@@ -22,6 +22,13 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 info: action.payload
+            }
+
+        case LOGOUT:
+            localStorage.removeItem('billsplit.token');
+            return {
+                ...state,
+                info: {}
             }
             
         default:

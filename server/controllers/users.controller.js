@@ -94,7 +94,7 @@ module.exports.login = async (req, res) => {
             userId : userInstance.id
           }, PRIVATE_KEY);
 
-        res.status(200).json({
+        return res.status(200).json({
           id: userInstance.id,
           name: userInstance.name,
           email: userInstance.email,
@@ -132,22 +132,13 @@ module.exports.dashboard = async (req, res, next) => {
 
 // Logout user
 module.exports.logout = async (req, res) => {
-  const { name, group_id } = req.body;
-  console.log(name, group_id);
-  
-  const member = new Member({
-      name, 
-      group_id
-    });
     try {
-      const data = await member.save();
       // Send response if success
       res.status(200).json({
-        name:data.name,
-        group_id:data.group_id,
+        msg: "You're logged out successfully!"
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send('Failed to create member');
+      res.status(400).send('Failed to logout ');
     }
 };

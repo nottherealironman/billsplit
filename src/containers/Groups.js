@@ -6,9 +6,9 @@ import { convertToReadableDate } from '../helpers/index';
 
 // Components import 
 import Sidebar from '../components/Sidebar';
-import Content from '../components/Content';
+import Content from './Content';
 
-const token = localStorage.getItem('billsplit.token');
+var token;
 
 export class Groups extends Component {
     
@@ -26,6 +26,7 @@ export class Groups extends Component {
     }
 
     componentWillMount() {
+        token = localStorage.getItem('billsplit.token') || this.props.user.token;
         this.props.fetchGroupList(token);
     }
 

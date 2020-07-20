@@ -34,7 +34,7 @@ class Login extends Component {
         if (token !== undefined) {
             localStorage.setItem('billsplit.token', token);
         }
-        // Redirect to the same page from where user was before
+        // Redirect to the same page from where user was before or redirect to default /groups page
         const { from } = this.props.location.state || { from: { pathname: "/app/groups" } };
         this.props.history.push(from);
     }

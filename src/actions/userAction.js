@@ -1,4 +1,4 @@
-import { LOGIN, SIGNUP, FETCH_USER_INFO } from './constants/action-types';
+import { LOGIN, SIGNUP, FETCH_USER_INFO, LOGOUT } from './constants/action-types';
 
 // Method to fetch information of current user
 export const fetchUserInfo = (token) => dispatch => {
@@ -56,6 +56,26 @@ export const login = (formData) => dispatch => {
         }))
         .catch(error => {
             console.log('error while fetching data');
+        });
+}
+
+// user logout
+export const logout = (token) => dispatch => {
+    fetch('http://localhost:3001/v1/users/logout', {
+        method: 'POST',
+        headers: new Headers({
+            // Send token in header
+            'Authorization': `JWT ${token}`,
+            'content-type': 'application/json'
+        }),
+    })
+        .then(res => res.json())
+        .then(user => dispatch({
+            type: LOGOUT,
+            payload: user
+        }))
+        .catch(error => {
+            console.log('error while logging out');
         });
 }
 
