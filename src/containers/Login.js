@@ -34,12 +34,13 @@ class Login extends Component {
         if (token !== undefined) {
             localStorage.setItem('billsplit.token', token);
         }
-        this.props.history.push("/app/group");
+        // Redirect to the same page from where user was before
+        const { from } = this.props.location.state || { from: { pathname: "/app/groups" } };
+        this.props.history.push(from);
     }
 
     render() {
-        /* const { from } = this.props.location.state || { from: { pathname: '/' } }
-        console.log(from); */
+        
         return (
             <div>
                 <div className="row d-flex justify-content-center align-items-center login-wrapper">

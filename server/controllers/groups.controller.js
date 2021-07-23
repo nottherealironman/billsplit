@@ -76,11 +76,11 @@ module.exports.update = async (req, res) => {
   try {
     const upGroup = await Group.findByIdAndUpdate({'_id':req.params.id}, group, {new: true, useFindAndModify: false});
     // Send response if success
-    res.status(200).json({
+    res.status(200).json(upGroup/* {
       name:upGroup.name,
       description:upGroup.description,
       groupId: upGroup.id,
-    });
+    } */);
   } catch (error) {
     console.log(error);
     res.status(400).send('Failed to update group');

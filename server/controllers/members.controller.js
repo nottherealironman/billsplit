@@ -2,6 +2,8 @@ const config = require('../config');
 const Member = require('../models/MemberModel');
 const User = require('../models/UserModel');
 const Bill = require('../models/BillModel');
+const Group = require('../models/GroupModel');
+var ObjectId = require('mongodb').ObjectID;
 
 // Method to get members which are in same group as current user
 module.exports.getAll = async (req, res) => {
@@ -14,22 +16,47 @@ module.exports.getAll = async (req, res) => {
   
   try{
     // Fetch members info of groups having current user as a member
-    const users = await Member.aggregate([
+    const groups = await Member.aggregate([
+      { "$match" : { group_id : {$in: groupIds} }}, // Only match the groups in which user is a member
       {
-          $match : { group_id : {$in: groupIds} }
+        $lookup: {
+          "from": "groups",
+          "localField": "group_id",
+          "foreignField": "_id",
+          as: "groups"
+        }
       },
       {
-        //right outer join
-              $lookup : {
-                from: 'users',
-                localField: "user_id",
-                foreignField: "_id",
-                as: "user_info"
-              }
+        $lookup: {
+          "from": "users",
+          "localField": "user_id",
+          "foreignField": "_id",
+          as: "users"
+        }
+      },
+      {
+        $unwind: "$groups"
+      },
+      {
+        $unwind: "$users"
+      },
+      {
+        $group: {
+          _id: "$groups._id",
+          group_name: {
+            $first: "$groups.name"
+          },
+          user_info: {
+            $addToSet: {
+              name: "$users.name",
+              _id: "$users._id",
+            }
+          }
+        }
       }
     ]);
-    console.log(users);
-    res.status(200).json(users);
+    console.log(groups);
+    res.status(200).json(groups);
   }
   catch (error) {
     console.log(error);
@@ -38,18 +65,68 @@ module.exports.getAll = async (req, res) => {
 }
 
 // Method to fetch specific member
-/*module.exports.getOne = async (req, res) => {
-  console.log(req.params.id)
-  const member = await Member.find({'user_id':req.params.id});
-  console.log(member);
+module.exports.search = async (req, res) => {
+  const { email, group_id } = req.body;
+  console.log(email, group_id)
+  
   try{
-    res.status(200).json(member);
+    const user = await User.aggregate([
+      {
+        "$match": {
+          email: {
+            $regex: email +'.*'
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "members",
+          let: {
+            user_id: "$_id"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: [
+                        ObjectId(group_id),
+                        "$group_id"
+                      ]
+                    },
+                    {
+                      $eq: [
+                        "$$user_id",
+                        "$user_id"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "members"
+        }
+      },
+      { 
+        // Specifying which fields to return
+        $project : { 
+            name: 1, 
+            email : 1, 
+            "members.group_id" : 1,
+            "members.user_id" : 1  
+          } 
+        }
+    ]);
+
+    res.status(200).json(user);
   }
   catch (error) {
     console.log(error);
-    res.status(400).send('Failed to fetch member');
+    res.status(400).send('No user found with specified email');
   }
-}*/
+}
 
 // Method to add new member
 module.exports.create = async (req, res) => {
@@ -68,10 +145,13 @@ module.exports.create = async (req, res) => {
   });
   try {
       const data = await member.save();
+      const user = await User.findById(user_id);
       // Send response if success
       res.status(201).json({
         user_id:data.user_id,
         group_id:data.group_id,
+        name: user.name,
+        email: user.email
       });
     } catch (error) {
       console.log(error);
@@ -106,16 +186,19 @@ module.exports.create = async (req, res) => {
 
 // Method to delete member
 module.exports.delete = async (req, res) => {
-  const member = await Member.findByIdAndDelete(req.params.id);
-  console.log(member.group_id);
+
+  const member = await Member.deleteMany({'user_id':req.params.user_id, 'group_id':req.params.group_id});
+  console.log(member);
 
   try{
     if(!member){
       return res.status(404).send({'msg': 'No member found'});
     }
     // Delete bill paid by that member if member is deleted
-    await Bill.deleteMany({'member_id':req.params.id, 'group_id':member.group_id});
-    res.status(200).json({'msg':'Member deleted successfully'});
+    await Bill.deleteMany({'member_id':req.params.user_id, 'group_id':req.params.group_id});
+    res.status(200).json({
+      'msg':'Member deleted successfully'
+    });
   }
   catch (error) {
     console.log(error);

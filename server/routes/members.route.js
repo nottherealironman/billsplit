@@ -5,9 +5,9 @@ const membersRoutes = express.Router();
 
 // Protected routes of member 
 membersRoutes.get('/', auth.checkAuth, membersController.getAll);
-//membersRoutes.get('/:id', auth.checkAuth, membersController.getOne);
+membersRoutes.post('/search', auth.checkAuth, membersController.search);
 membersRoutes.post('/', auth.checkAuth, membersController.create);
 //membersRoutes.put('/:id', auth.checkAuth, membersController.update);
-membersRoutes.delete('/:id', auth.checkAuth, membersController.delete);
+membersRoutes.delete('/:user_id/:group_id', auth.checkAuth, membersController.delete);
 
 module.exports = membersRoutes;
